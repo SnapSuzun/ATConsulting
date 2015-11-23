@@ -1,3 +1,6 @@
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,20 +14,41 @@ import java.io.PrintWriter;
  */
 @WebServlet("/login")
 public class TryLogin extends HttpServlet{
-    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException,ServletException
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException,ServletException
     {
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
+        JsonReader reader = Json.createReader(req.getInputStream());
+        JsonObject jsonObj = reader.readObject();
+        reader.close();
+
+        jsonObj = jsonObj.getJsonObject("auth");
+
+        String username = null;
+        String password = null;
+
+        if (jsonObj.containsKey("login"))
+        {
+            username = jsonObj.getString("login");
+        }
+        if (jsonObj.containsKey("password"))
+        {
+            password = jsonObj.getString("password");
+        }
 
         resp.setContentType("text/html; charset=UTF-8");
 
         PrintWriter out = resp.getWriter();
-        if(username.equals("master") && password.equals("master"))
+
+        DatabaseHelper databaseHelper = new DatabaseHelper();
+
+        out.println(databaseHelper.checkUser(username, password));
+
+        /*if(username.equals("master") && password.equals("master"))
         {
             out.println("Welcome, master!");
         } else
         {
             out.println("Welcome, simple user");
         }
+        */
     }
 }

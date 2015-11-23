@@ -4,11 +4,19 @@ var data;
 
 function TestJava()
 {
-	var login = document.getElementById("login").value();
-	var pass = document.getElementById("password").value();
+	var login = document.getElementById("login").value;
+	var pass = document.getElementById("password").value;
 	var ajax = new XMLHttpRequest();
-	ajax.open('GET', 'http://127.0.0.1:8080/WebTest/login?username=' + login + '&password=' + pass, false);
-	ajax.send();
+	ajax.open('POST', 'http://127.0.0.1:8080/WebTest/login', false);
+	var json = new Object();
+	var auth = new Object();
+	auth.login = login;
+	auth.password = pass;
+	json.auth = auth;
+	ajax.send(JSON.stringify(json));
+
+	var yyy =  ajax.responseText;
+	console.log(yyy);
 }
 
 function getDataFromServer () {
