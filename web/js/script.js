@@ -21,9 +21,11 @@ function TestJava()
 
 function getDataFromServer () {
 	var ajax = new XMLHttpRequest();
-	ajax.open('GET', 'http://smart-route.ru:8100/adapter-web/rest/dictionary/c580d006-f86f-4bdd-84be-b51de6f626c6', false);
+	//ajax.open('GET', 'http://smart-route.ru:8100/adapter-web/rest/dictionary/c580d006-f86f-4bdd-84be-b51de6f626c6', false);
+	ajax.open('GET', 'http://127.0.0.1:8080/WebTest/get_records', false);
 	ajax.send();
 	var response = ajax.responseText;
+	console.log(response);
 	return response;
 }
 function parseData(){

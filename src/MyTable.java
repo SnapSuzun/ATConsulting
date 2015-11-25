@@ -8,11 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "A")
+@Table(name = "Users")
 public class MyTable {
     @Id
     @Column(name="id")
-    private String id;
+    private int id;
 
     @Column(name="login")
     private String login;
@@ -26,11 +26,20 @@ public class MyTable {
     @Column(name="first_name")
     private String first_name;
 
+    @Column(name="gender")
+    private String gender;
+
+    @Column(name="birthDate")
+    private String birthDate;
+
+    @Column(name="phone")
+    private String phone;
+
     public MyTable() {}
 
     // getters
 
-    public String getId()
+    public int getId()
     {
         return id;
     }
@@ -55,9 +64,13 @@ public class MyTable {
         return first_name;
     }
 
+    public String getGender() {return  gender;}
+    public String getBirthDate() {return  birthDate;}
+    public String getPhone() {return  phone;}
+
     // setters
 
-    public void setId(String id)
+    public void setId(int id)
     {
         this.id = id;
     }
@@ -72,13 +85,28 @@ public class MyTable {
         this.password = password;
     }
 
-    public void setLast_name(String last_name)
+    public void setLastName(String last_name)
     {
         this.last_name = last_name;
     }
 
-    public void setFirst_name(String first_name)
+    public void setFirstName(String first_name)
     {
         this.first_name = first_name;
+    }
+
+    public void setGender(String gender)
+    {
+        this.gender = gender;
+    }
+
+    public void setBirthDate(String date)
+    {
+        this.birthDate = date;
+    }
+
+    public void setPhone(String phone)
+    {
+        this.phone = phone;
     }
 }
