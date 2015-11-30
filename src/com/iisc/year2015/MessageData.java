@@ -13,7 +13,7 @@ public class MessageData {
         Element messageData = getDictionary.addElement("smev:MessageData")
                 .addAttribute("xmlns:smev", "http://smev.gosuslugi.ru/rev120315");
         Element appData = messageData.addElement("smev:AppData");
-        Element dictionaryId = appData.addElement(id)
-                .addText("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
+        Element dictionaryId = appData.addElement("atc:DictionaryId")
+                .addText(id);
     }
 }

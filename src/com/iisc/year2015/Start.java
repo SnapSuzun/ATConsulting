@@ -1,5 +1,6 @@
 package com.iisc.year2015;
 
+import org.apache.commons.codec.binary.Base64;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -14,14 +15,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 /**
  * Created by Snap on 02.11.2015.
  */
 public class Start {
-    public static void main(String[] args) throws NoSuchProviderException, NoSuchAlgorithmException, CertificateException, UnrecoverableEntryException, KeyStoreException, IOException {
+    public static void main(String[] args) throws NoSuchProviderException, NoSuchAlgorithmException, CertificateException, UnrecoverableEntryException, KeyStoreException, IOException, SignatureException, InvalidKeyException {
 
-        /*Document xml = DocumentHelper.createDocument();
+
+        Security.addProvider(new ViPNetProvider());
+
+        Document xml = DocumentHelper.createDocument();
         Element root = xml.addElement("soap:Envelope").
                 addNamespace("soap", "http://schemas.xmlsoap.org/soap/envelope/").
                 addNamespace("actor", "http://smev.gosuslugi.ru/actors/smev").
@@ -29,18 +34,32 @@ public class Start {
                 addNamespace("ds", "http://www.w3.org/2000/09/xmldsig#")
                 .addNamespace("atc", "http://at-sibir.ru/getDictionary")
                 .addNamespace("smev", "http://smev.gosuslugi.ru/rev120315");
-        Header head = new Header();
-        head.generateHeader(root);
+
+        X509Certificate cert = containerKeyStore();
+
         Element body = root.addElement("soap:Body")
                 .addAttribute("wsu:Id", "body")
                 .addAttribute("xmlns:wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd");
-        Element getDictionary = body.addElement("atc:getDictionary");
-        Message message = new Message();
-        message.generateMessage(getDictionary);
-        MessageData messageData = new MessageData();
-        messageData.generateMessageData(getDictionary);
-        System.out.println(root.asXML());*/
 
+
+
+        MessageDigest digestDriver = MessageDigest.getInstance("GOST3411-94","ViPNet");
+        digestDriver.update(body.toString().getBytes());
+        byte[] digestValue = digestDriver.digest();
+        String hash = Base64.encodeBase64URLSafeString(digestValue);
+
+        byte[] certBytes = cert.getEncoded();
+        String certStr = Base64.encodeBase64URLSafeString(digestValue);
+
+        Header head = new Header(certStr, hash);
+        head.generateHeader(root);
+
+        Element getDictionary = body.addElement("atc:getDictionary");
+        Message message = new Message("test", "123456789");
+        message.generateMessage(getDictionary);
+        MessageData messageData = new MessageData("c580d006-f86f-4bdd-84be-b51de6f626c6");
+        messageData.generateMessageData(getDictionary);
+        System.out.println(root.asXML());
 
 
         /*Security.addProvider(new ViPNetProvider());
@@ -53,7 +72,7 @@ public class Start {
         containerKeyStore();*/
 
     }
-    public static void containerKeyStore() throws NoSuchProviderException, KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
+    public static X509Certificate containerKeyStore() throws NoSuchProviderException, KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
         KeyStore keyStore = KeyStore.getInstance("ViPNetContainer", "ViPNet");
 
         keyStore.load(null, null);
@@ -64,7 +83,9 @@ public class Start {
         char[] password = "1234567890".toCharArray();
         Key key = keyStore.getKey(alias, password);
 
-        System.out.println(key);
+        X509Certificate cert = (X509Certificate)keyStore.getCertificate(alias);
+        //System.out.println(key);
+        return cert;
     }
     public void createHeader(Element root)
     {

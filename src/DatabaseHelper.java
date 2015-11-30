@@ -2,10 +2,7 @@
  * Created by Snap on 16.11.2015.
  */
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.cfg.AnnotationConfiguration;
 
 import java.util.Iterator;
@@ -23,7 +20,10 @@ public class DatabaseHelper {
         startWorkWithDB();
         Session session = dbSessions.openSession();
         try {
-            List usersList = session.createQuery("FROM MyTable").list();
+            Query query = session.createQuery("SELECT password from MyTable where login = :login");
+            query.setParameter("login", login);
+            //query.executeUpdate();
+            List usersList = query.list();
             for (Iterator iterator = usersList.iterator(); iterator.hasNext(); ) {
                 MyTable counter = (MyTable) iterator.next();
 
