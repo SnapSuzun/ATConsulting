@@ -1,5 +1,3 @@
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import javax.json.Json;
 import javax.json.JsonObject;
